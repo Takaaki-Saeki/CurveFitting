@@ -13,11 +13,9 @@ def load_data():
     return df
 
 def preprocess(df):
-    """標準化およびバイアス項の追加"""
+    """バイアス項の追加などの前処理"""
     X = df[[2]].values
     y = df[[3]].values
-    X = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
-    y = (y - np.mean(y, axis=0)) / np.std(y, axis=0)
 
     X = np.insert(X, 0, np.ones((1, X.shape[0]), dtype=int), axis=1)
 
@@ -37,11 +35,14 @@ def plot(X, y, params):
     fig, ax = plt.subplots(figsize=(5, 5))
     fig.subplots_adjust(bottom=0.2)
     fig.subplots_adjust(left=0.2)
-    x = np.arange(-2, 2, 0.01)
-    ax.set_xlabel('petal_length (scaled)')
-    ax.set_ylabel('petal_width (scaled)')
-    ax.scatter(X[:, 1],y[:, 0], color='green')
-    ax.plot(X[:, 1], np.dot(X, params)[:, 0], color='red')
+    x = np.arange(-0, 8, 0.01)
+    best_fit = params[1]*x+params[0]
+    ax.set_xlabel('petal_length')
+    ax.set_ylabel('petal_width')
+    ax.set_xlim([0.0, 8.0])
+    ax.set_ylim([0.0, 3.0])
+    ax.scatter(X[:, 1],y[:, 0], color='blue', s=5)
+    ax.plot(x, best_fit, color='red')
     plt.savefig('result.jpg')
     plt.show()
 

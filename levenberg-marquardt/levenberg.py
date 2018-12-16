@@ -52,27 +52,26 @@ def initialize(init_a, init_b, init_c):
 
 
 def levenberg(params):
-    """最大反復回数1000回として反復計算"""
+    """最大反復回数100回として反復計算"""
     n_iteration = 0
     res2_list = []
-    mu = 0.01
+    lam = 0.01
     alpha = 1.0
     res_old = np.inf
     threshold = 1000
     init_params = params
-    while n_iteration <= 1000:
+    while n_iteration <= 100:
         J, r = jacobi_res(params[0], params[1], params[2])
         JJ = np.dot(J.T, J)
-        inv = np.linalg.inv(JJ + mu*np.diag(np.diag(JJ)))
+        inv = np.linalg.inv(JJ + lam*np.diag(np.diag(JJ)))
         new_params = params - alpha*np.dot(np.dot(inv, J.T), r)
-        if np.linalg.norm(new_params - params) < 1.0*10**(-2):
+        determination = np.linalg.norm(new_params - params)/np.linalg.norm(params)
+        if determination < 1.0*10**(-5):
             break
         if np.linalg.norm(r) < res_old:
-            mu = mu/10
+            lam = lam/10
         else:
-            mu = mu*10
-        print(params)
-        print(np.linalg.norm(r))
+            lam = lam*10
         params = new_params
         res_old = np.linalg.norm(r)
         res2_list.append(np.linalg.norm(r)**2)
@@ -87,24 +86,23 @@ def levenberg(params):
 
 def plot(params, res2_list):
     """グラフの描画"""
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 4))
-    fig.subplots_adjust(bottom=0.2)
-    fig.subplots_adjust(left=0.2)
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(16, 6))
+    fig.subplots_adjust(wspace=0.5, hspace=0.2)
 
     x1 = np.arange(100, 200, 1)
     func = gaussian(x1, params[0], params[1], params[2])
-    ax1.set_xlabel('[s]')
-    ax1.set_ylabel('v')
-    ax1.plot(x1, func, color='black')
-    ax1.scatter(arr_x, arr_y, color='red')
+    ax1.set_xlabel('x', fontdict={'fontsize':18})
+    ax1.set_ylabel('y', fontdict={'fontsize':18})
+    ax1.plot(x1, func, color='red')
+    ax1.scatter(arr_x, arr_y, color='blue')
 
     x2 = np.arange(0, len(res2_list), 1)
     ax2.set_yscale('log')
-    ax2.set_xlabel('number of iteration')
-    ax2.set_ylabel('S(a)')
+    ax2.set_xlabel('number of iteration', fontdict={'fontsize':18})
+    ax2.set_ylabel('S(a)', fontdict={'fontsize':18})
     ax2.plot(x2, np.array(res2_list), color='black')
     ax2.set_ylim([1.0*10**(-3), 100.0])
-    ax2.set_xlim([0, 200])
+    ax2.set_xlim([0, 100])
 
     plt.savefig('levenberg.jpg')
     plt.show()

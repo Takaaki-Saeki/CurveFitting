@@ -52,7 +52,7 @@ def calc(params):
     """最大反復回数20回として反復計算"""
     n_iteration = 0
     res_list = []
-    while n_iteration <= 50:
+    while n_iteration <= 10:
         J, r = jacobi_res(params[0], params[1], params[2])
         inv = np.linalg.inv(np.dot(J.T, J))
         new_params = params - np.dot(np.dot(inv, J.T), r)
@@ -67,26 +67,26 @@ def calc(params):
 
 def plot(params, res_list):
     """グラフの描画"""
-    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(10, 4))
-    fig.subplots_adjust(bottom=0.2)
-    fig.subplots_adjust(left=0.2)
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(16, 6))
+    fig.subplots_adjust(wspace=0.5, hspace=0.2)
 
     x1 = np.arange(100, 200, 1)
     func = gaussian1(x1, params[0], params[1], params[2])
-    ax1.set_xlabel('[s]')
-    ax1.set_ylabel('v')
-    ax1.plot(x1, func, color='black')
-    ax1.scatter(arr_x, arr_y, color='red')
+    ax1.set_xlabel('x', fontdict={'fontsize':18})
+    ax1.set_ylabel('y', fontdict={'fontsize':18})
+    ax1.plot(x1, func, color='red')
+    ax1.scatter(arr_x, arr_y, color='blue')
 
     x2 = np.arange(0, len(res_list), 1)
     ax2.set_yscale('log')
-    ax2.set_xlabel('number of iteration')
-    ax2.set_ylabel('S(a)')
+    ax2.set_xlabel('number of iteration', fontdict={'fontsize':18})
+    ax2.set_ylabel('S(a)', fontdict={'fontsize':18})
     ax2.plot(x2, np.array(res_list), color='black')
     ax2.set_ylim([1.0*10**(-3), 100.0])
     ax2.set_xlim([0, 20])
+    ax2.set_xticks(np.arange(20))
 
-    plt.savefig('gauss-newton_gaussian.jpg')
+    plt.savefig('gauss-newton_gaussian_fail.jpg')
     plt.show()
 
 
